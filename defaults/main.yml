@@ -1,0 +1,15 @@
+---
+# The user to run snmpd; will be created if not exist.
+snmpd_user: snmp
+
+# The group to run snmpd; will be created if not exist.
+snmpd_group: snmp
+
+# A list of listening addresses on which to receive incoming SNMP requests.
+# See the section LISTENING ADDRESSES in the snmpd(8) manual page for more
+# information about the format.
+# This sets snmpd.conf variable agentaddress.
+snmpd_listen: [ 'udp:161' ]
+
+# A list of SNMP options to be directly inserted into snmpd.conf.
+snmpd_options: []

@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+
+# Run as user/group snmp, disable smux, enable syslog, and disable file log.
+SNMPD_FLAGS="-u {{ snmpd_user }} -g {{ snmpd_group }} -I -smux -Lsd -Lf /dev/null"

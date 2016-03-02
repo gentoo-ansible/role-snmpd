@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+
+# A list of listening addresses on which to receive incoming SNMP requests.
+agentaddress {{ snmpd_listen | join(',') }}
+
+{% for item in snmpd_options %}
+{{ item }}
+{% endfor %}

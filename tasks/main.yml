@@ -1,0 +1,41 @@
+---
+- name: install net-analyzer/net-snmp
+  portage: package=net-analyzer/net-snmp
+
+- name: create group
+  group: >
+    name={{ snmpd_group }}
+    gid=161
+    system=yes
+  when: not snmpd_group in ['root', 'nobody']
+
+# Note: snmp user must be in group "wheel" to be able to read /proc on hardened system.
+- name: create user
+  user: >
+    name={{ snmpd_user }}
+    uid=161
+    group={{ snmpd_group }}
+    groups=wheel
+    home=/dev/null
+    createhome=no
+    shell=/sbin/nologin
+    comment='added by ansible for net-snmp'
+    system=yes
+  tags: accounts
+  when: not snmpd_group in ['root', 'nobody', 'nogroup']
+
+- name: configure snmpd
+  template: >
+    src="{{ item.src }}"
+    dest="{{ item.dest }}"
+    owner=root group=root mode=0644
+  notify: restart snmpd
+  with_items:
+    - { src: 'snmpd.conf.j2', dest: '/etc/snmp/snmpd.conf' }
+    - { src: 'snmpd.confd.j2', dest: '/etc/conf.d/snmpd' }
+
+# Trigger handlers now to avoid unnecessary restarts.
+- meta: flush_handlers
+
+- name: enable and start snmpd
+  service: name=snmpd enabled=yes state=started
